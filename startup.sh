@@ -30,7 +30,7 @@ INTERNAL_IP=$(curl -s -H "Metadata-Flavor: Google" \
 
 cat <<EOF > kubeadm.conf
 kind: MasterConfiguration
-apiVersion: kubeadm.k8s.io/v1alpha1
+apiVersion: v1
 cloudProvider: gce
 apiServerCertSANs:
   - 10.96.0.1
