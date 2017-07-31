@@ -46,6 +46,9 @@ sudo kubeadm init \
   --kubernetes-version ${KUBERNETES_VERSION}
 
 sudo chmod 644 /etc/kubernetes/admin.conf
+sudo cp /etc/kubernetes/admin.conf $HOME/.
+sudo chown $(id -u):$(id -g) $HOME/admin.conf
+export KUBECONFIG=$HOME/admin.conf
 
 kubectl taint nodes --all node-role.kubernetes.io/master- \
   --kubeconfig /etc/kubernetes/admin.conf
