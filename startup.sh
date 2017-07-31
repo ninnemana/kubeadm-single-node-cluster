@@ -27,10 +27,13 @@ EXTERNAL_IP=$(curl -s -H "Metadata-Flavor: Google" \
   http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip)
 INTERNAL_IP=$(curl -s -H "Metadata-Flavor: Google" \
   http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip)
+KUBERNETES_VERSION=$(curl -s -H "Metadata-Flavor: Google" \
+  http://metadata.google.internal/computeMetadata/v1/instance/attributes/kubernetes-version)
 
 cat <<EOF > kubeadm.conf
 kind: MasterConfiguration
 apiVersion: v1
+kubernetesVersion: ${KUBERNETES_VERSION}
 cloudProvider: gce
 apiServerCertSANs:
   - 10.96.0.1
@@ -38,17 +41,10 @@ apiServerCertSANs:
   - ${INTERNAL_IP}
 EOF
 
-KUBERNETES_VERSION=$(curl -s -H "Metadata-Flavor: Google" \
-  http://metadata.google.internal/computeMetadata/v1/instance/attributes/kubernetes-version)
-
 sudo kubeadm init \
-  --config=kubeadm.conf \
-  --kubernetes-version ${KUBERNETES_VERSION}
+  --config=kubeadm.conf
 
 sudo chmod 644 /etc/kubernetes/admin.conf
-sudo cp /etc/kubernetes/admin.conf $HOME/.
-sudo chown $(id -u):$(id -g) $HOME/admin.conf
-export KUBECONFIG=$HOME/admin.conf
 
 kubectl taint nodes --all node-role.kubernetes.io/master- \
   --kubeconfig /etc/kubernetes/admin.conf
