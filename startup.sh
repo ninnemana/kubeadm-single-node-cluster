@@ -32,7 +32,7 @@ KUBERNETES_VERSION=$(curl -s -H "Metadata-Flavor: Google" \
 
 cat <<EOF > kubeadm.conf
 kind: MasterConfiguration
-apiVersion: v1
+apiVersion: kubeadm.k8s.io/v1alpha1
 kubernetesVersion: ${KUBERNETES_VERSION}
 cloudProvider: gce
 apiServerCertSANs:
